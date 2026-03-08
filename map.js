@@ -110,12 +110,22 @@ function render(){
     }
   }
 
-  // Regions (optional layer)
+  // Regions (optional layer) — semi-transparent overlay + dashed border + name
   if(L.regions){
     for(const r of world.regions||[]){
       const d=polyPath(r.polygon);if(!d)continue;
       const co=cmap[r.country_id];
-      h.push(`<path class="region" d="${d}" fill="${hexRgba(co?co.color:'#aaa',0.4)}"/>`);
+      const fill=hexRgba(co?co.color:'#aaa',0.25);
+      // dashed border darker than fill
+      const stroke=co?co.color:'#888';
+      h.push(`<path class="region" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.5" stroke-dasharray="4 2"/>`);
+      // region name label at medium zoom+
+      if(vs>=Z_MED && r.polygon.length>0){
+        const cx=r.polygon.reduce((s,p)=>s+p[0],0)/r.polygon.length;
+        const cy=r.polygon.reduce((s,p)=>s+p[1],0)/r.polygon.length;
+        const fs=Math.max(6,Math.min(13,vs*75));
+        h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle" font-size="${fs}px" opacity="0.9">${esc(r.name)}</text>`);
+      }
     }
   }
 
