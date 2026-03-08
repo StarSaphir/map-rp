@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Carte Admin</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<head><meta charset="UTF-8"><title>Carte Admin</title>
+<link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="pw-overlay" class="visible">
   <div id="pw-box">
     <h2>🔒 Accès Admin</h2>
-    <p style="color:#9ca3af;margin-bottom:16px;font-size:0.9rem">Entrez le mot de passe admin</p>
-    <input type="password" id="pw-input" placeholder="Mot de passe"
-           onkeydown="if(event.key==='Enter')checkPw()">
+    <p style="color:#9ca3af;margin-bottom:16px;font-size:.9rem">Mot de passe requis</p>
+    <input type="password" id="pw-input" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPw()">
     <br><button id="pw-submit" onclick="checkPw()">Entrer</button>
     <div id="pw-error">Mot de passe incorrect.</div>
   </div>
 </div>
 <div id="header">
-  <div><h1>⚔ Carte Admin</h1><div class="sub">Vue complète — Couches admin actives</div></div>
+  <div><h1>⚔ Carte Admin</h1><div class="sub">Vue complète avec conflits</div></div>
 </div>
 <div id="main">
   <div id="map-container">
     <svg id="map-svg"></svg>
-    <div id="coords">(0, 0)</div>
+    <div id="coords"></div>
+    <div id="zoom-hint">F = cadrer · molette = zoom</div>
   </div>
   <div id="sidebar">
     <div class="panel-title">Couches</div>
     <div id="layer-list"></div>
   </div>
+</div>
+<div id="detail">
+  <div id="detail-header">
+    <span id="detail-name"></span>
+    <span class="cls" onclick="closeDetail()">✕</span>
+  </div>
+  <div id="detail-body"></div>
 </div>
 <div id="popup">
   <span class="cls" onclick="closePopup()">✕</span>
@@ -35,15 +39,14 @@
 </div>
 <script src="map.js"></script>
 <script>
-const _PW = "admin1234";
-function checkPw() {
-  if(document.getElementById('pw-input').value === _PW) {
+const _PW="admin1234";
+function checkPw(){
+  if(document.getElementById('pw-input').value===_PW){
     document.getElementById('pw-overlay').classList.remove('visible');
     init(true);
-  } else {
+  }else{
     document.getElementById('pw-error').style.display='block';
   }
 }
 </script>
-</body>
-</html>
+</body></html>

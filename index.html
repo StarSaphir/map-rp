@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Carte Mondiale</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<head><meta charset="UTF-8"><title>Carte Mondiale</title>
+<link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="header">
-  <div><h1>🌍 Carte Mondiale</h1><div class="sub">Vue Joueur</div></div>
+  <div><h1>🌍 Carte Mondiale</h1><div class="sub">Vue Joueur — cliquez un territoire pour les détails</div></div>
 </div>
 <div id="main">
   <div id="map-container">
     <svg id="map-svg"></svg>
-    <div id="coords">(0, 0)</div>
+    <div id="coords"></div>
+    <div id="zoom-hint">F = cadrer · molette = zoom · drag = pan</div>
   </div>
   <div id="sidebar">
     <div class="panel-title">Couches</div>
     <div id="layer-list"></div>
   </div>
 </div>
+<!-- country detail -->
+<div id="detail">
+  <div id="detail-header">
+    <span id="detail-name"></span>
+    <span class="cls" onclick="closeDetail()">✕</span>
+  </div>
+  <div id="detail-body"></div>
+</div>
+<!-- hover popup -->
 <div id="popup">
   <span class="cls" onclick="closePopup()">✕</span>
   <h3></h3><div class="pb"></div>
 </div>
 <script src="map.js"></script>
 <script>init(false);</script>
-</body>
-</html>
+</body></html>

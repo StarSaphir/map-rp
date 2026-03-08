@@ -14,12 +14,12 @@
             6500
           ],
           [
-            3000,
-            7000
+            2878.399846052289,
+            7015.169496676807
           ],
           [
-            4500,
-            7200
+            4800.901181436185,
+            7299.4053723206625
           ],
           [
             5500,
@@ -53,6 +53,28 @@
             1500,
             5000
           ]
+        ],
+        [
+          [
+            7200,
+            6000
+          ],
+          [
+            7500,
+            6400
+          ],
+          [
+            7900,
+            6200
+          ],
+          [
+            7700,
+            5800
+          ],
+          [
+            7200,
+            6000
+          ]
         ]
       ]
     }
@@ -61,72 +83,147 @@
     {
       "id": "UFB",
       "name": "Union Fédérale Baltique",
-      "continent": "eurasia",
       "color": "#FFD000"
     },
     {
       "id": "RUS",
       "name": "Russie",
-      "continent": "eurasia",
       "color": "#CC3333"
+    },
+    {
+      "id": "country_bffb5c7b",
+      "name": "Nouveau Pays",
+      "color": "#AAAAAA"
+    }
+  ],
+  "territories": [
+    {
+      "id": "terr_rus_main",
+      "country_id": "RUS",
+      "continent_id": "eurasia",
+      "landmass_index": 0,
+      "polygon": [
+        [
+          4800.901181436185,
+          7299.4053723206625
+        ],
+        [
+          6500,
+          6500
+        ],
+        [
+          7000,
+          5500
+        ],
+        [
+          6800,
+          4500
+        ],
+        [
+          5500,
+          4000
+        ],
+        [
+          3742.208966162886,
+          7153.990406954133
+        ]
+      ],
+      "name": "Territoire Russie"
+    },
+    {
+      "id": "terr_88d3e060",
+      "country_id": "UFB",
+      "continent_id": "eurasia",
+      "landmass_index": 0,
+      "polygon": [
+        [
+          3742.208966162886,
+          7153.990406954133
+        ],
+        [
+          5500,
+          4000
+        ],
+        [
+          4000,
+          4000
+        ],
+        [
+          2500,
+          4200
+        ],
+        [
+          1500,
+          5000
+        ],
+        [
+          2000,
+          6500
+        ],
+        [
+          2878.399846052289,
+          7015.169496676807
+        ]
+      ],
+      "name": ""
     }
   ],
   "regions": [
     {
-      "id": "finlande",
-      "country": "UFB",
+      "id": "reg_fc52673d",
+      "country_id": "UFB",
       "name": "Finlande",
-      "continent": "eurasia",
       "polygon": [
         [
-          3500,
-          6200
+          3742.208966162886,
+          7153.990406954133
         ],
         [
-          4000,
-          6800
+          2878.399846052289,
+          7015.169496676807
         ],
         [
-          4500,
+          2000,
           6500
         ],
         [
-          4300,
-          5800
+          1500,
+          5000
         ],
         [
-          3500,
-          6200
+          4421.253794161199,
+          5937.804544062621
         ]
-      ]
+      ],
+      "continent_id": "eurasia"
     },
     {
-      "id": "suede",
-      "country": "UFB",
+      "id": "reg_6cf528ca",
+      "country_id": "UFB",
       "name": "Suède",
-      "continent": "eurasia",
       "polygon": [
         [
-          3000,
-          5800
+          1500,
+          5000
         ],
         [
-          3500,
-          6200
+          4421.253794161199,
+          5937.804544062621
         ],
         [
-          4300,
-          5800
+          5500,
+          4000
         ],
         [
           4000,
-          5200
+          4000
         ],
         [
-          3000,
-          5800
+          2500,
+          4200
         ]
-      ]
+      ],
+      "continent_id": "eurasia"
     }
   ],
   "geography": [
@@ -138,7 +235,7 @@
         "glacial",
         "tundra"
       ],
-      "continent": "eurasia",
+      "continent_id": "eurasia",
       "polygon": [
         [
           3500,
@@ -167,35 +264,48 @@
     {
       "id": "helsinki",
       "name": "Helsinki",
-      "country": "UFB",
-      "region": "finlande",
+      "country_id": "UFB",
       "position": [
         3900,
         6300
       ],
-      "continent": "eurasia",
+      "region_id": "finlande",
+      "continent_id": "eurasia",
       "population": 650000,
       "capital": true
     },
     {
       "id": "stockholm",
       "name": "Stockholm",
-      "country": "UFB",
-      "region": "suede",
+      "country_id": "UFB",
       "position": [
         3400,
         5900
       ],
-      "continent": "eurasia",
+      "region_id": "suede",
+      "continent_id": "eurasia",
       "population": 975000,
       "capital": false
+    },
+    {
+      "id": "moscow",
+      "name": "Moscou",
+      "country_id": "RUS",
+      "position": [
+        5100,
+        6600
+      ],
+      "region_id": "",
+      "continent_id": "eurasia",
+      "population": 12500000,
+      "capital": true
     }
   ],
   "roads": [
     {
       "id": "r1",
       "name": "Route Helsinki-Stockholm",
-      "continent": "eurasia",
+      "continent_id": "eurasia",
       "nodes": [
         [
           3900,
@@ -216,7 +326,7 @@
     {
       "id": "rw1",
       "name": "Voie ferrée baltique",
-      "continent": "eurasia",
+      "continent_id": "eurasia",
       "nodes": [
         [
           3900,
@@ -237,25 +347,25 @@
     {
       "id": "port_hki",
       "name": "Port d'Helsinki",
-      "country": "UFB",
+      "country_id": "UFB",
       "position": [
         3950,
         6250
       ],
-      "continent": "eurasia"
+      "continent_id": "eurasia"
     }
   ],
   "airports": [
     {
       "id": "apt_hki",
-      "name": "Aéroport d'Helsinki",
-      "country": "UFB",
+      "name": "Aéroport Helsinki",
+      "country_id": "UFB",
       "position": [
         3870,
         6380
       ],
       "type": "civil",
-      "continent": "eurasia"
+      "continent_id": "eurasia"
     }
   ]
 }
