@@ -1,0 +1,261 @@
+{
+  "continents": [
+    {
+      "id": "eurasia",
+      "name": "Eurasia",
+      "landmasses": [
+        [
+          [
+            1500,
+            5000
+          ],
+          [
+            2000,
+            6500
+          ],
+          [
+            3000,
+            7000
+          ],
+          [
+            4500,
+            7200
+          ],
+          [
+            5500,
+            7000
+          ],
+          [
+            6500,
+            6500
+          ],
+          [
+            7000,
+            5500
+          ],
+          [
+            6800,
+            4500
+          ],
+          [
+            5500,
+            4000
+          ],
+          [
+            4000,
+            4000
+          ],
+          [
+            2500,
+            4200
+          ],
+          [
+            1500,
+            5000
+          ]
+        ]
+      ]
+    }
+  ],
+  "countries": [
+    {
+      "id": "UFB",
+      "name": "Union Fédérale Baltique",
+      "continent": "eurasia",
+      "color": "#FFD000"
+    },
+    {
+      "id": "RUS",
+      "name": "Russie",
+      "continent": "eurasia",
+      "color": "#CC3333"
+    }
+  ],
+  "regions": [
+    {
+      "id": "finlande",
+      "country": "UFB",
+      "name": "Finlande",
+      "continent": "eurasia",
+      "polygon": [
+        [
+          3500,
+          6200
+        ],
+        [
+          4000,
+          6800
+        ],
+        [
+          4500,
+          6500
+        ],
+        [
+          4300,
+          5800
+        ],
+        [
+          3500,
+          6200
+        ]
+      ]
+    },
+    {
+      "id": "suede",
+      "country": "UFB",
+      "name": "Suède",
+      "continent": "eurasia",
+      "polygon": [
+        [
+          3000,
+          5800
+        ],
+        [
+          3500,
+          6200
+        ],
+        [
+          4300,
+          5800
+        ],
+        [
+          4000,
+          5200
+        ],
+        [
+          3000,
+          5800
+        ]
+      ]
+    }
+  ],
+  "geography": [
+    {
+      "id": "lapland",
+      "name": "Laponie",
+      "type": "climate",
+      "tags": [
+        "glacial",
+        "tundra"
+      ],
+      "continent": "eurasia",
+      "polygon": [
+        [
+          3500,
+          6800
+        ],
+        [
+          4000,
+          7100
+        ],
+        [
+          4500,
+          6900
+        ],
+        [
+          4400,
+          6500
+        ],
+        [
+          3500,
+          6800
+        ]
+      ]
+    }
+  ],
+  "cities": [
+    {
+      "id": "helsinki",
+      "name": "Helsinki",
+      "country": "UFB",
+      "region": "finlande",
+      "position": [
+        3900,
+        6300
+      ],
+      "continent": "eurasia",
+      "population": 650000,
+      "capital": true
+    },
+    {
+      "id": "stockholm",
+      "name": "Stockholm",
+      "country": "UFB",
+      "region": "suede",
+      "position": [
+        3400,
+        5900
+      ],
+      "continent": "eurasia",
+      "population": 975000,
+      "capital": false
+    }
+  ],
+  "roads": [
+    {
+      "id": "r1",
+      "name": "Route Helsinki-Stockholm",
+      "continent": "eurasia",
+      "nodes": [
+        [
+          3900,
+          6300
+        ],
+        [
+          3700,
+          6100
+        ],
+        [
+          3400,
+          5900
+        ]
+      ]
+    }
+  ],
+  "railways": [
+    {
+      "id": "rw1",
+      "name": "Voie ferrée baltique",
+      "continent": "eurasia",
+      "nodes": [
+        [
+          3900,
+          6300
+        ],
+        [
+          3600,
+          6000
+        ],
+        [
+          3400,
+          5900
+        ]
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "id": "port_hki",
+      "name": "Port d'Helsinki",
+      "country": "UFB",
+      "position": [
+        3950,
+        6250
+      ],
+      "continent": "eurasia"
+    }
+  ],
+  "airports": [
+    {
+      "id": "apt_hki",
+      "name": "Aéroport d'Helsinki",
+      "country": "UFB",
+      "position": [
+        3870,
+        6380
+      ],
+      "type": "civil",
+      "continent": "eurasia"
+    }
+  ]
+}
