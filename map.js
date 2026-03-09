@@ -15,7 +15,8 @@ const L={continents:true,territories:true,regions:false,geography:false,
 async function init(isAdmin){
   adminMode=isAdmin;
   world=await fetch('data/world.json').then(r=>r.json());
-  if(adminMode) conflicts=await fetch('data/conflicts.json').then(r=>r.json());
+  // Load conflicts for all users — public sees occ zones + frontlines only (spec point 4)
+  conflicts=await fetch('data/conflicts.json').then(r=>r.json()).catch(()=>[]);
   fitView(); render(); setupControls(); buildLayerPanel();
 }
 
@@ -70,16 +71,6 @@ function render(){
   // Ocean
   h.push(`<rect width="${el.clientWidth}" height="${el.clientHeight}" fill="#1a3a5c"/>`);
 
-  // Geography (hidden by default, shown when layer on)
-  if(L.geography){
-    const GC={terrain:'rgba(180,140,80,0.35)',climate:'rgba(100,200,100,0.3)',biome:'rgba(80,160,200,0.3)'};
-    for(const g of world.geography||[]){
-      const d=polyPath(g.polygon);if(!d)continue;
-      h.push(`<path class="geo-zone" d="${d}" fill="${GC[g.type]||GC.terrain}"
-        onclick="showPopup(event,'${esc(g.name)}','Type: ${esc(g.type)}<br>Tags: ${esc((g.tags||[]).join(', ')||'—')}')"/>`);
-    }
-  }
-
   // Continents base
   if(L.continents){
     for(const c of world.continents||[]){
@@ -118,13 +109,42 @@ function render(){
       const fill=hexRgba(co?co.color:'#aaa',0.25);
       // dashed border darker than fill
       const stroke=co?co.color:'#888';
-      h.push(`<path class="region" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.5" stroke-dasharray="4 2"/>`);
+      // Regions: low pointer-events so territory click still works,
+      // but label text is clickable to show region+country info (spec point 3)
+      h.push(`<path class="region" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.5" stroke-dasharray="4 2" pointer-events="none"/>`);
       // region name label at medium zoom+
       if(vs>=Z_MED && r.polygon.length>0){
         const cx=r.polygon.reduce((s,p)=>s+p[0],0)/r.polygon.length;
         const cy=r.polygon.reduce((s,p)=>s+p[1],0)/r.polygon.length;
         const fs=Math.max(6,Math.min(13,vs*75));
-        h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle" font-size="${fs}px" opacity="0.9">${esc(r.name)}</text>`);
+        const rCountry=cmap[r.country_id];
+        const rInfo=`Pays: ${esc(rCountry?rCountry.name:r.country_id)}`;
+        h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle"
+          font-size="${fs}px" opacity="0.9" style="cursor:pointer"
+          onclick="selectRegion(event,'${esc(r.country_id)}','${esc(r.name)}')">${esc(r.name)}</text>`);
+      }
+    }
+  }
+
+  // Geography — drawn OVER territories/regions so always visible (spec point 6)
+  if(L.geography){
+    const GC={
+      terrain:'rgba(200,160,80,0.25)',
+      climate:'rgba(80,200,120,0.25)',
+      biome:'rgba(60,150,220,0.25)'
+    };
+    const GS={terrain:'rgba(180,130,40,0.7)',climate:'rgba(40,170,80,0.7)',biome:'rgba(30,100,200,0.7)'};
+    for(const g of world.geography||[]){
+      const d=polyPath(g.polygon);if(!d)continue;
+      h.push(`<path class="geo-zone" d="${d}" fill="${GC[g.type]||GC.terrain}"
+        stroke="${GS[g.type]||GS.terrain}" stroke-width="0.6" stroke-dasharray="5 3"
+        pointer-events="all"
+        onclick="showPopup(event,'${esc(g.name)}','Type: ${esc(g.type)}<br>Tags: ${esc((g.tags||[]).join(', ')||'—')}')"/>`);
+      if(vs>=Z_LOW){
+        const cx=g.polygon.reduce((s,p)=>s+p[0],0)/g.polygon.length;
+        const cy=g.polygon.reduce((s,p)=>s+p[1],0)/g.polygon.length;
+        const fs=Math.max(6,Math.min(12,vs*70));
+        h.push(`<text class="infra-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle" font-size="${fs}px" opacity="0.85" pointer-events="none">${esc(g.name)}</text>`);
       }
     }
   }
@@ -145,18 +165,21 @@ function render(){
     }
   }
 
-  // Conflicts (admin-only on admin page; public only sees occupied zones if any)
+  // Conflicts: public sees occ-zones + frontlines; admin also sees battleplans+units
   if(L.conflicts){
-    for(const c of (adminMode?conflicts:[])){
+    for(const c of conflicts){
+      // Occupied zones — visible to all (spec point 4)
       for(const z of c.occupied_zones||[]){
         const d=polyPath(z.polygon);if(!d)continue;
-        h.push(`<path class="occ-zone" d="${d}"/>`);
+        h.push(`<path class="occ-zone" d="${d}"
+          onclick="showPopup(event,'Zone occupée','Occupant: ${esc(z.occupier||'—')}<br>Propriétaire: ${esc(z.original_owner||'—')}')"/>`);
+      }
+      // Frontlines — visible to all (spec point 4)
+      for(const fl of c.frontlines||[]){
+        const d=linePath(fl.nodes);if(!d)continue;
+        h.push(`<path class="frontline" d="${d}"/>`);
       }
       if(adminMode){
-        for(const fl of c.frontlines||[]){
-          const d=linePath(fl.nodes);if(!d)continue;
-          h.push(`<path class="frontline" d="${d}"/>`);
-        }
         for(const bp of c.battleplans||[]){
           const d=linePath(bp.nodes);if(!d)continue;
           h.push(`<path class="battle-plan" d="${d}"/>`);
@@ -262,6 +285,18 @@ function closeDetail(){
   activeCountryId=null;
   document.getElementById('detail').classList.remove('open');
   render();
+}
+
+// ── Region detail (shows region name + opens country panel) ──────────────
+function selectRegion(event, countryId, regionName){
+  event.stopPropagation();
+  // Show region popup then open country detail
+  const cmap2=countryMap();
+  const co=cmap2[countryId];
+  const popInfo=`Région de : ${esc(co?co.name:countryId)}`;
+  showPopup(event, regionName, popInfo);
+  // Also open country detail panel
+  selectCountry(countryId, event);
 }
 
 // ── Popup ──────────────────────────────────────────────────────────────────
