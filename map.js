@@ -122,7 +122,7 @@ function render(){
         h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)+fs*1.3}" text-anchor="middle"
           font-size="${fs}px" opacity="0.85" style="cursor:pointer;font-style:italic"
           onclick="selectRegion(event,'${esc(r.country_id)}','${esc(r.name)}')">${esc(r.name)}</text>`);
-      }      }
+      }
     }
   }
 
@@ -149,7 +149,7 @@ function render(){
       const gtype=g.type||'terrain';
       h.push(`<path d="${d}" fill="url(#ht-${gtype})"
         stroke="${GS[gtype]||GS.terrain}" stroke-width="0.8" stroke-dasharray="5 3"
-        onclick="showPopup(event,'${esc(g.name)}','Type: ${esc(g.type)}<br>Tags: ${esc((g.tags||[]).join(', ')||'—')}')"/>`);
+        onclick="showPopup(event,'${esc(g.name)}','Type: ${esc(g.type)}<br>Tags: ${esc((g.tags||[]).join(', ')||'\\u2014')}')"/>`);
       if(vs>=Z_LOW){
         const cx=g.polygon.reduce((s,p)=>s+p[0],0)/g.polygon.length;
         const cy=g.polygon.reduce((s,p)=>s+p[1],0)/g.polygon.length;
@@ -184,7 +184,7 @@ function render(){
       for(const z of c.occupied_zones||[]){
         const d=polyPath(z.polygon);if(!d)continue;
         h.push(`<path class="occ-zone" d="${d}"
-          onclick="showPopup(event,'Zone occupée','Occupant: ${esc(z.occupier||'—')}<br>Propriétaire: ${esc(z.original_owner||'—')}')"/>`);
+          onclick="showPopup(event,'Zone occupée','Occupant: ${esc(z.occupier||'\\u2014')}<br>Propriétaire: ${esc(z.original_owner||'\\u2014')}')"/>`);
       }
       // Frontlines — visible to all (spec point 4)
       for(const fl of c.frontlines||[]){
