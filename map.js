@@ -112,39 +112,51 @@ function render(){
       // Regions: low pointer-events so territory click still works,
       // but label text is clickable to show region+country info (spec point 3)
       h.push(`<path class="region" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.5" stroke-dasharray="4 2" pointer-events="none"/>`);
-      // region name label at medium zoom+
-      if(vs>=Z_MED && r.polygon.length>0){
+      // region name label — high zoom only to avoid overlap (spec point 5)
+      if(vs>=Z_HIGH && r.polygon.length>0){
         const cx=r.polygon.reduce((s,p)=>s+p[0],0)/r.polygon.length;
         const cy=r.polygon.reduce((s,p)=>s+p[1],0)/r.polygon.length;
-        const fs=Math.max(6,Math.min(13,vs*75));
+        const fs=Math.max(6,Math.min(11,vs*65));
         const rCountry=cmap[r.country_id];
-        const rInfo=`Pays: ${esc(rCountry?rCountry.name:r.country_id)}`;
-        h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle"
-          font-size="${fs}px" opacity="0.9" style="cursor:pointer"
+        // Offset below centroid to separate from country name above (spec point 5)
+        h.push(`<text class="city-lbl" x="${sx(cx)}" y="${sy(cy)+fs*1.3}" text-anchor="middle"
+          font-size="${fs}px" opacity="0.85" style="cursor:pointer;font-style:italic"
           onclick="selectRegion(event,'${esc(r.country_id)}','${esc(r.name)}')">${esc(r.name)}</text>`);
-      }
+      }      }
     }
   }
 
-  // Geography — drawn OVER territories/regions so always visible (spec point 6)
+  // Geography — drawn OVER territories/regions with SVG hatch (spec point 6)
   if(L.geography){
-    const GC={
-      terrain:'rgba(200,160,80,0.25)',
-      climate:'rgba(80,200,120,0.25)',
-      biome:'rgba(60,150,220,0.25)'
-    };
-    const GS={terrain:'rgba(180,130,40,0.7)',climate:'rgba(40,170,80,0.7)',biome:'rgba(30,100,200,0.7)'};
+    const hatchDefs=`<defs>
+      <pattern id="ht-terrain" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45 0 0)">
+        <rect width="8" height="8" fill="rgba(200,160,80,0.15)"/>
+        <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(180,130,40,0.55)" stroke-width="1.5"/>
+      </pattern>
+      <pattern id="ht-climate" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45 0 0)">
+        <rect width="8" height="8" fill="rgba(80,200,120,0.15)"/>
+        <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(40,170,80,0.55)" stroke-width="1.5"/>
+      </pattern>
+      <pattern id="ht-biome" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45 0 0)">
+        <rect width="8" height="8" fill="rgba(60,150,220,0.15)"/>
+        <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(30,100,200,0.55)" stroke-width="1.5"/>
+      </pattern>
+    </defs>`;
+    h.push(hatchDefs);
+    const GS={terrain:'rgba(180,130,40,0.85)',climate:'rgba(40,170,80,0.85)',biome:'rgba(30,100,200,0.85)'};
     for(const g of world.geography||[]){
       const d=polyPath(g.polygon);if(!d)continue;
-      h.push(`<path class="geo-zone" d="${d}" fill="${GC[g.type]||GC.terrain}"
-        stroke="${GS[g.type]||GS.terrain}" stroke-width="0.6" stroke-dasharray="5 3"
-        pointer-events="all"
+      const gtype=g.type||'terrain';
+      h.push(`<path d="${d}" fill="url(#ht-${gtype})"
+        stroke="${GS[gtype]||GS.terrain}" stroke-width="0.8" stroke-dasharray="5 3"
         onclick="showPopup(event,'${esc(g.name)}','Type: ${esc(g.type)}<br>Tags: ${esc((g.tags||[]).join(', ')||'—')}')"/>`);
       if(vs>=Z_LOW){
         const cx=g.polygon.reduce((s,p)=>s+p[0],0)/g.polygon.length;
         const cy=g.polygon.reduce((s,p)=>s+p[1],0)/g.polygon.length;
         const fs=Math.max(6,Math.min(12,vs*70));
-        h.push(`<text class="infra-lbl" x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle" font-size="${fs}px" opacity="0.85" pointer-events="none">${esc(g.name)}</text>`);
+        h.push(`<text x="${sx(cx)}" y="${sy(cy)}" text-anchor="middle" font-size="${fs}px"
+          fill="#fff" opacity="0.88" pointer-events="none" font-style="italic"
+          paint-order="stroke" stroke="#000" stroke-width="0.6px">${esc(g.name)}</text>`);
       }
     }
   }
@@ -194,8 +206,8 @@ function render(){
     }
   }
 
-  // Ports (high zoom or layer enabled)
-  if(L.ports || vs>=Z_HIGH){
+  // Ports — strictly filter-controlled (spec point 4)
+  if(L.ports){
     for(const p of world.ports||[]){
       const px=sx(p.position[0]),py=sy(p.position[1]),s=5;
       h.push(`<rect class="port-icon" x="${px-s/2}" y="${py-s/2}" width="${s}" height="${s}"
@@ -207,8 +219,8 @@ function render(){
     }
   }
 
-  // Airports (high zoom or layer enabled)
-  if(L.airports || vs>=Z_HIGH){
+  // Airports — strictly filter-controlled (spec point 4)
+  if(L.airports){
     for(const a of world.airports||[]){
       const ax=sx(a.position[0]),ay=sy(a.position[1]),s=6;
       h.push(`<line class="ap-line" x1="${ax-s}" y1="${ay}" x2="${ax+s}" y2="${ay}"/>`);
